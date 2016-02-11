@@ -42,7 +42,7 @@ public class Mine {
 			int intIOType = 0;
 			int intChannel = 0;
 			double dblValue = 0.0;
-			double value0 = 9999, value1 = 9999, value2 = 9999;
+			double value0 = 9999, value1 = 9999, value2 = 9999, intTempValue = 9999;
 			double valueDIBit = 9999, valueDIPort = 9999, valueCounter = 9999;
 			int intHandle = 0;
 			IntByReference refHandle = new IntByReference(0);
@@ -118,6 +118,10 @@ public class Mine {
 			//Request the value of Counter1.
 			LJUD.addRequest(intHandle, LJUD.Constants.ioGET_COUNTER, 1, 0, 0, 0);
 			
+			//Add request for internal temperature reading -- in kelvin
+			// Internal temp sensor uses analog input channel 30 on the U3.
+			LJUD.addRequest(intHandle, LJUD.Constants.ioGET_AIN, 30, 0, 0, 0);
+			
 			while(true) {
 	
 				/* 
@@ -190,6 +194,9 @@ public class Mine {
 		
 						if(intIOType == LJUD.Constants.ioGET_COUNTER)
 							valueCounter = dblValue;	//Counter1 (FIO7)
+							
+						if(intIOType == 10 && intChannel == 30)
+							intTempValue = ((dblValue * 9) / 5) - 459.67;
 		
 						LJUD.getNextResult(intHandle, refIOType, refChannel, refValue, dummyInt, dummyDouble);
 					}
@@ -216,23 +223,22 @@ public class Mine {
 				*	Note: this is a function for this:
 				*		tcVoltsToTemp(int tcType, double tcVolts, double cjTempK, com.sun.jna.ptr.DoubleByReference pTCTempK) 
 				*/
-				
-				// Convert to temperature       formatter.format(
-				
+								
 				double degreesF = 0.0;
 				double degressC = 0.0;
 				
 				degreesF = ((100 * value0 ) - 273.15) * 1.8 + 32;
 				degressC = 100 * value0 - 273.15;
 				
-				//System.out.println("AIN0 (Temp) = " + String.format("%.2f", degreesF) + "degrees F, or " + String.format("%.2f", degressC) + " degrees C.");
-				System.out.println("AIN0 (Temp) = " + formatter.format(degreesF) + " degrees F, or " + formatter.format(degressC) + " degrees C.");
+				System.out.println("Temp Probe (AIN0) = " + formatter.format(degreesF) + " degrees F, or " + formatter.format(degressC) + " degrees C.");
+				System.out.println("Temp internal (AIN30) = " + formatter.format(intTempValue) + " degrees F");
 				System.out.println("AIN1 = " + value1);
 				System.out.println("AIN2 = " + value2);
 				System.out.println("Switch (FIO5) = " + valueDIBit);
 				//System.out.println("FIO5-FIO6 = " + valueDIPort);	//Will read 3 (binary 11) if both lines are pulled-high as normal.
 				System.out.println("Counter1 (FIO7) " + valueCounter);
 				System.out.println("Relay on (DAC0) = " + dacOn);
+				
 	
 				System.out.println("\nPress Enter to go again or (q) and Enter to quit");
 				line = br.readLine().toUpperCase().trim();
