@@ -149,18 +149,9 @@ public class Mine {
 				//Request the new value of Counter1.
 				LJUD.addRequest(intHandle, LJUD.Constants.ioGET_COUNTER, 1, 0, 0, 0);
 				
-				//Try this
-				//System.out.println("Counter out=" + eGet(intHandle, LJUD.Constants.ioGET_COUNTER, 1, 0, 0));
-			
+		
 				//Execute the requests.
 				LJUD.goOne(intHandle);
-
-				// Can get anyting good from the counter here?
-				
-				
-				
-				
-				
 				
 				//Get all the results. The input measurement results are stored.
 				//All other results are for configuration or output requests so 
@@ -238,9 +229,10 @@ public class Mine {
 				System.out.println("AIN0 (Temp) = " + formatter.format(degreesF) + " degrees F, or " + formatter.format(degressC) + " degrees C.");
 				System.out.println("AIN1 = " + value1);
 				System.out.println("AIN2 = " + value2);
-				System.out.println("FIO5 = " + valueDIBit);
-				System.out.println("FIO5-FIO6 = " + valueDIPort);	//Will read 3 (binary 11) if both lines are pulled-high as normal.
+				System.out.println("Switch (FIO5) = " + valueDIBit);
+				//System.out.println("FIO5-FIO6 = " + valueDIPort);	//Will read 3 (binary 11) if both lines are pulled-high as normal.
 				System.out.println("Counter1 (FIO7) " + valueCounter);
+				System.out.println("Relay on (DAC0) = " + dacOn);
 	
 				System.out.println("\nPress Enter to go again or (q) and Enter to quit");
 				line = br.readLine().toUpperCase().trim();
